@@ -1,0 +1,30 @@
+name: diagnose-canceled
+on:
+  pull_request:
+    branches: [ "main" ]
+env:
+  CARGO_TERM_COLOR: never
+jobs:
+  who-sends-kill-minus-one:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Tools
+      run: sudo apt-get install -y -qq bpftrace >/dev/null && bpftrace --version
+    - name: Build every test binary first
+      run: cargo test --workspace --no-run
+    - name: All tests, with every broadcast or group kill() printed as it happens
+      run: |
+        # Root-owned, line-buffered: every signal delivered to the runner's own processes, and
+        # every broadcast or group kill(), printed the moment it happens, with who sent it.
+        sudo bpftrace -B line -e '
+        tracepoint:syscalls:sys_enter_execve /str(args->filename) == "/usr/bin/kill" || str(args->filename) == "/bin/kill"/ {
+          printf("EXEC kill from thread [%s] pid=%d parent=%d argv: ", comm, pid, curtask->real_parent->tgid);
+          join(args->argv);
+        }
+        tracepoint:signal:signal_generate /args->comm == "Runner.Worker" || args->comm == "Runner.Listener"/ {
+          printf("SIGNAL %d to %s pid=%d, sent by %s pid=%d (parent %d)\n", args->sig, args->comm, args->pid, comm, pid, curtask->real_parent->tgid);
+        }' &
+        sleep 5
+        set -o pipefail
+        cargo test --workspace 2>&1 | grep -E "^test result|FAILED|panicked|^error"
