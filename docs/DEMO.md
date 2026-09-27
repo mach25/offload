@@ -1650,46 +1650,8 @@ produce on **one** daemon; the other two need a fence to fire, which is a two-da
   which drops the end of a long string. `pm clear se.mach25.offload.app` gives a fresh node, but wait
   for it to finish before `am start`, or the launch sticks on the splash ("failed to attach").
 
-### The owner's fleet as left, and updating each member (end of session ninety-two)
+### The owner's fleet, and updating each member
 
-Fleet `f1ee7001`. Every member is real now: the laptop and the Mac have authenticated Claude Code on
-one account, so **an agent run costs usage**. Walk with the fake agent in a fleet of its own, not here.
+Kept in `local/SETUP.md`, which is not committed: it describes one person's devices and network.
+The general techniques for each kind of device are in the sections above.
 
-- **The laptop's node** is `/tmp/mw`, config `/tmp/mw/a.toml`, `[agent]` naming
-  `~/.local/bin/claude` with `config_dir = ~/.claude-alt`, and it owns `~/offload` (ADR-0074). Restart
-  with `kill $(cat /tmp/mw/a.pid)`, then `nohup ./target/debug/offloadd --config /tmp/mw/a.toml > /tmp/mw/aN.log
-  2>&1 &` and write the new pid back. The fake agent's config is `a.toml.fake-agent`. `/tmp/hw` and
-  `/tmp/hw2` pin `[workspace] dir` to their own state directories, since only one node may own
-  `~/offload`.
-- **The Mac mini** (`macmini`) runs from the worktree `~/mach25-offload-host`, **not** the clone
-  `~/mach25-offload-ios`, which has the owner's uncommitted changes. To update: `git bundle create
-  src.bundle main`; `scp` it to `macmini:/tmp/src.bundle`; there, `git pull --ff-only /tmp/src.bundle main`
-  in the worktree, `cargo build --release -p offload-node -p offload-cli`, then
-  `scripts/install-macos-service.sh`. Since session ninety-four the daemon is a **launchd LaunchAgent**
-  (`se.mach25.offloadd`, running `~/bin/offloadd`), so the script *is* the update: it installs the
-  binaries by rename and restarts the service. Restart alone with `launchctl kickstart -k
-  gui/501/se.mach25.offloadd`. There is no `daemon.pid` any more; `launchctl print
-  gui/501/se.mach25.offloadd` names the pid. The log is `~/.offload/daemon.log`. It starts at *login*,
-  not boot, and the Mac has no auto-login, so after a reboot somebody logs in. The first minute after
-  a restart can show `No route to host` sends and a fleet of one. That is the Mac's link, not Local
-  Network privacy: the new daemon met the laptop about 40 s in. **But a rebuild can lose it.**
-  After the ADR-0080 build (session ninety-four) every send was `No route to host` for minutes,
-  while Apple's `/usr/bin/python3` on the Mac reached the laptop's UDP port at the same moment: a
-  new ad-hoc signature is a new app to macOS's Local Network privacy. The fix is at the Mac's
-  console (System Settings → Privacy & Security → Local Network, or the prompt if one is showing).
-  Run the python control before blaming the link. A stable signing identity would make the grant
-  survive rebuilds. It reads `~/.config/offload/node.toml`: the agent named in full (an ssh-started daemon has no
-  login `PATH`), mDNS on, seeds for both laptop addresses. **ssh from the laptop needs a retry**
-  (`-b 192.0.2.5`): the first attempt wakes the Mac, which sleeps after a minute idle until
-  ADR-0077 holds it awake, and that happens only once it may host.
-- **The phones and the emulator** take `android-app/app/build/outputs/apk/debug/app-debug.apk`
-  (`scripts/build-android-product.sh`) with `adb install -r`, on the phone over wireless adb
-  (`PHONESERIAL`), then `am start -n se.mach25.offload.app/.ui.MainActivity`. Since ADR-0079 the
-  app's daemon **stops itself** about 90 s after the app leaves the screen, unless it holds a run.
-  So a phone that looks `draining` in `offload nodes` is normal. Open the app to bring it back. The laptop's `/tmp/hw` and `/tmp/hw2` daemons now write `node.pid`.
-- **Every node must be on the same wire version** (v36 since session ninety-three), since `MIN_VERSION` tracks `VERSION`: update
-  all of them in one pass after a bump, the Mac included.
-- **Profiling a phone's daemon:** Samsung's user build refuses perf events (`simpleperf stat` from
-  `adb shell` says "not supported"). Profile the laptop's node in the same fleet instead: `eu-stack -p
-  <pid>` sixty times, half a second apart, and count the busy threads' frames. That is how the gossip
-  cost was found.
