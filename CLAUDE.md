@@ -27,6 +27,8 @@ Two binaries:
 - `docs/pitfalls/` — what previous sessions got wrong, by subject. The index is at the bottom
   of this file; **open the file covering what you are about to touch, before you touch it.**
 - `docs/GLOSSARY.md` and `docs/COMMANDS.md` — the long form of the two sections below.
+- `docs/ANDROID.md` — for a person, not a session: building the app, installing it, joining a
+  fleet. Keep it true when the app's screens or the build change.
 - `docs/use-cases/` — workloads somebody actually wants, explored against the code. Not decisions:
   each one says what already fits, what does not, and which of the gaps is worth an ADR. Read one
   before designing for the workload it covers.
