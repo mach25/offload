@@ -210,7 +210,8 @@ gossip ageing and the adaptive failure detector, with no ADR (pitfalls in `gossi
   The first CI run caught it; every spawn now retries a busy program briefly
   (`spawn_when_not_busy`, `testing-and-sweeps`). The second CI failure, a job "canceled" with no
   failing test, was `signal_group`'s `kill -15 -<pgid>` reaching the runner's listener under
-  Ubuntu's `kill`; it now passes `-s 15 -- -<pgid>`.
+  Ubuntu's `kill`; it now passes `-s 15 -- -<pgid>`. The third, six workspace tests with no git identity on the
+  runner, was fixed by a `commit` helper that brings its own identity.
 
 **Noticed, not defects.** A one-shot `offload logs` from a peer counts as attendance for
 `WATCHER_GRACE` (10 s), the same as `logs -f`: in session ninety-two it made a restarted task's
