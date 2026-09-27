@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Offload project mark</title>
+  <desc id="desc">A broken circular loop whose two outgoing strokes suggest a workload being handed off.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M91 26A45 45 0 1 0 91 102"/>
+    <path d="M77 48h27"/>
+    <path d="M77 80h19"/>
+  </g>
+</svg>

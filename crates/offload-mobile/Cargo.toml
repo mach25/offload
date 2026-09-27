@@ -1,0 +1,31 @@
+[package]
+name = "offload-mobile"
+description = "The Android app's client for offloadd, exposed to Kotlin with UniFFI (ADR-0071)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+# `cdylib` for the app (liboffload_mobile.so, loaded through JNA by the generated Kotlin), `lib` for
+# the bindgen binary and the tests.
+crate-type = ["cdylib", "lib"]
+
+[[bin]]
+# UniFFI's generator, run on the host against the built library ("library mode"), so the Kotlin can
+# only ever describe the Rust that ships in the APK.
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+
+[dependencies]
+offload-node = { path = "../offload-node" }
+offload-core = { path = "../offload-core" }
+uniffi = { version = "0.29", features = ["cli"] }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+# Editing the owner's node.toml in place, comments and all (the Settings screen, ADR-0071).
+toml_edit = "0.22"
+anyhow = { workspace = true }
+
+[lints]
+workspace = true

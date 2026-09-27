@@ -1,0 +1,61 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/mach25/offload"
+
+[workspace.dependencies]
+offload-core = { path = "crates/offload-core" }
+
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+clap = { version = "4", features = ["derive"] }
+async-trait = "0.1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tokio = { version = "1", features = ["full"] }
+sysinfo = "0.33"
+ed25519-dalek = { version = "2", features = ["rand_core", "pkcs8"] }
+# ECDSA P-256 verification, for an approval key held in secure hardware (ADR-0069 §4): StrongBox,
+# the TEE, the Secure Enclave and TPMs sign P-256, not ed25519. Verify-only in the fleet, so no
+# default features and no randomness.
+p256 = { version = "0.13", default-features = false, features = ["ecdsa", "std"] }
+rand = "0.8"
+argon2 = { version = "0.5", default-features = false, features = ["alloc"] }
+zeroize = { version = "1", features = ["alloc"] }
+rpassword = "7"
+hex = "0.4"
+base64 = "0.22"
+# Property testing, dev-only. `default-features = false` drops the fork/timeout machinery
+# (and its process spawning): these properties are pure functions, so a failing case is a
+# panic and never a hang.
+proptest = { version = "1", default-features = false, features = ["std"] }
+
+# A memory-hard KDF compiled without optimisation is memory-hard for us and nobody else:
+# `offload init` takes ten seconds in a debug build, and the tests that derive a key dominate
+# the suite. Optimising just these two leaves the rest of the tree debuggable.
+[profile.dev.package.argon2]
+opt-level = 3
+[profile.dev.package.blake2]
+opt-level = 3
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+
+[workspace.lints.clippy]
+# The failure modes here are logic errors under churn, so panics and silent
+# truncation are worth being loud about.
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+cast_possible_truncation = "warn"

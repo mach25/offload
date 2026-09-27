@@ -1,0 +1,29 @@
+[package]
+name = "offload-cli"
+description = "The `offload` operator CLI."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "offload"
+path = "src/main.rs"
+
+[dependencies]
+offload-core = { workspace = true }
+offload-probe = { path = "../offload-probe" }
+offload-node = { path = "../offload-node" }
+offload-store = { path = "../offload-store" }
+tokio = { version = "1", features = ["rt", "macros", "net", "io-util"] }
+anyhow = { workspace = true }
+clap = { workspace = true }
+rand = { workspace = true }
+rpassword = { workspace = true }
+serde_json = { workspace = true }
+hex = { workspace = true }
+thiserror = { workspace = true }
+zeroize = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="title desc">
+  <title id="title">Offload logo mark concepts</title>
+  <desc id="desc">Four monochrome geometric logo directions based on continuity, handoff, and device migration.</desc>
+  <rect width="960" height="600" rx="28" fill="#f5f3ee"/>
+  <style>
+    .mark { fill:none; stroke:#111820; stroke-width:14; stroke-linecap:round; stroke-linejoin:round }
+    .name { font:600 20px ui-sans-serif,system-ui,sans-serif; fill:#111820; letter-spacing:.02em }
+    .note { font:400 14px ui-sans-serif,system-ui,sans-serif; fill:#667078 }
+    .tile { fill:#fff; stroke:#dedbd3; stroke-width:1 }
+  </style>
+
+  <g transform="translate(40 40)">
+    <rect class="tile" width="420" height="240" rx="20"/>
+    <g class="mark" transform="translate(146 30)">
+      <path d="M91 26A45 45 0 1 0 91 102"/>
+      <path d="M77 48h27"/>
+      <path d="M77 80h19"/>
+    </g>
+    <text class="name" x="24" y="190">A · Relay loop</text>
+    <text class="note" x="24" y="216">O + hidden F; the workload exits the loop</text>
+  </g>
+
+  <g transform="translate(500 40)">
+    <rect class="tile" width="420" height="240" rx="20"/>
+    <g class="mark" transform="translate(146 30)">
+      <path d="M92 28A45 45 0 1 0 90 101H61V73"/>
+      <path d="M82 47l18 1"/>
+    </g>
+    <text class="name" x="24" y="190">B · Unbroken path</text>
+    <text class="note" x="24" y="216">One stroke; O resolves into a subtle L</text>
+  </g>
+
+  <g transform="translate(40 320)">
+    <rect class="tile" width="420" height="240" rx="20"/>
+    <g class="mark" transform="translate(146 30)">
+      <path d="M91 27A45 45 0 0 0 23 63a45 45 0 0 0 12 31"/>
+      <path d="M37 102a45 45 0 0 0 68-36 45 45 0 0 0-12-31"/>
+    </g>
+    <text class="name" x="24" y="190">C · Offset orbit</text>
+    <text class="note" x="24" y="216">Two hosts share one continuous circular motion</text>
+  </g>
+
+  <g transform="translate(500 320)">
+    <rect class="tile" width="420" height="240" rx="20"/>
+    <g class="mark" transform="translate(146 30)">
+      <path d="M92 28A45 45 0 1 0 93 99"/>
+      <circle cx="91" cy="28" r="2" fill="#111820"/>
+      <circle cx="93" cy="99" r="2" fill="#111820"/>
+      <path d="M72 64h30m-12-12 12 12-12 12"/>
+    </g>
+    <text class="name" x="24" y="190">D · Fleet handoff</text>
+    <text class="note" x="24" y="216">Explicit transfer between nodes in an open O</text>
+  </g>
+</svg>

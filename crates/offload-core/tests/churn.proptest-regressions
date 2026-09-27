@@ -1,0 +1,9 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 72afd27cbc29bb10ad403e3e13e5239d9fe010ead5088fd8382cb09e05957760 # shrinks to members = [1, 2, 3], events = [Notice(2, 0), Notice(0, 4), Notice(2, 3), Crash(4), Supervise(3)]
+cc 99e8fa144d723a42ca8889c72e4aaec4b8b53506870401ad5c2774d63ebe403a # shrinks to members = [4, 1, 2], events = [Notice(0, 1), Supervise(0), Gossip(0, 1), Crash(3)]
+cc 60de104988b37a048e32eb868adbc498dad33846bd532e390c7b91064eb24f87 # shrinks to members = [3, 1, 5, 2], events = [Tick(32), Tick(28), Supervise(4), Gossip(4, 2), Crash(4), Crash(1)]

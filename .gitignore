@@ -1,0 +1,18 @@
+/target
+**/*.rs.bk
+
+# Local node state: identity keypair, redb databases, worktrees, blobs.
+# Never commit these — the identity file is a private key.
+/dev/state-*
+*.redb
+
+.DS_Store
+
+# IDE workspace state (RustRover/IntelliJ).
+/.idea
+
+# Subagent dispatch log written by .claude/hooks/gate-subagents.sh
+.claude/hooks/dispatch.log
+
+# Cross-built binaries staged for other devices (see scripts/build-*.sh).
+/dist

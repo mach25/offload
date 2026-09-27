@@ -1,0 +1,19 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 2b466edfdf16307aa6b673d545ce7ad9cca54f93aef1d8a589d71b5e433227e7 # shrinks to events = [Place(0)]
+cc b869ae343c18b4b9b6066a2a73f4a9fdd2859bbeae4636e84a47be58fc577719 # shrinks to events = [Isolate(2), Place(2), Place(0)]
+cc a20e6b6d7eb127921c39a512a7c8db3a99a6e8623b3cc0e498ae649056162d10 # shrinks to events = [Swallow(2), Decline(3), Place(0)]
+cc 64d846c99536e6f5724d7c514cfabde7f97b11d9d3b541ef2420daaad2ee3cad # shrinks to events = [Tick(1), Tick(0), Tick(0), Isolate(1), Tick(1), Tick(0)]
+cc 6b7c26a41788cbb5f0ecee814e292e7144bedc277666b0edc6cd02c807cb0a1b # shrinks to events = [Decline(3), Place(3), Place(0)]
+cc 85ef7b9dc224cef042dc3b7051d193f03404c7411534e6499c4b67ff0bacd2d9 # shrinks to events = [Decline(3), Place(3), Place(0)]
+cc 70bd9581cef116ccd264fac9568970d9fa3cc33589a2671ca815b878130a3de7 # shrinks to events = [Decline(3), Tick(2), Tick(2), Place(2), Tick(2), Place(0)]
+cc 5693bd6e3dbab1adc4d5a077e11cb6567d33314ffbc8e41c79a1be8181b30566 # shrinks to events = [Swallow(2), Decline(0), Swallow(1), Swallow(3), Place(0), Isolate(3), Place(0)]
+cc 3558a4f2491c9181b6e1a6df484d5a488f2b4420afd071e69d89669f7fdf73d2 # shrinks to events = [Isolate(1), Store(1), Tick(3), Heal(3, 1)]
+cc b4c532d3e76ce269cc3ddc91971f546f71b9690306353ce69729a551028a548f # shrinks to events = [Swallow(3), Place(0), Turn(2), Turn(3)]
+cc 764f6c0626cb6b38bb7a8e28bf9bf0aba7f28b5c0e5058d5a20660f7a0dbb0dd # shrinks to events = [Decline(3), Swallow(2), Place(0), Turn(1), Turn(2)]
+cc 2f4e1edb02f837391db24e7a7f7e0849b11056430d3357d8317e33fc6234d03c # shrinks to events = [Place(0), Turn(3), Tick(3), Tick(0)]
+cc 3e44d9aaf411e20a1da911b1faaef3f79b9312a8d7ab9f4508b50c838adea2b8 # shrinks to events = [Swallow(1), Decline(0), Decline(2), Decline(3), Place(0)]

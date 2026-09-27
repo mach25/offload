@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Offload project mark</title>
+  <desc id="desc">An open gradient loop with two angular device nodes and a sharp orange handoff arrow.</desc>
+  <defs>
+    <linearGradient id="loop" x1="28" y1="24" x2="96" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#08BBD4"/>
+      <stop offset="0.52" stop-color="#3157E8"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+  <path d="M91 25A46 46 0 1 0 91 103"
+        fill="none" stroke="url(#loop)" stroke-width="14" stroke-linecap="butt"/>
+  <rect x="85" y="19" width="14" height="14" rx="2" fill="#08BBD4"/>
+  <rect x="85" y="96" width="14" height="14" rx="2" fill="#7C3AED"/>
+  <path d="M55 58h31V47l24 17-24 17V70H55z" fill="#FF6B35"/>
+</svg>

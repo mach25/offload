@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Offload mark from assets/app-icon.svg (128-unit canvas), scaled into the adaptive icon's
+     safe zone: the 66dp circle at the centre of the 108dp layer. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.62"
+        android:scaleY="0.62"
+        android:translateX="14.3"
+        android:translateY="14.3">
+        <path
+            android:pathData="M88,31A39,39 0,1 0,88 97"
+            android:strokeWidth="12"
+            android:fillColor="#00000000">
+            <aapt:attr name="android:strokeColor">
+                <gradient
+                    android:type="linear"
+                    android:startX="33"
+                    android:startY="29"
+                    android:endX="91"
+                    android:endY="99">
+                    <item android:offset="0" android:color="#FF22D3EE" />
+                    <item android:offset="0.52" android:color="#FF4F7CFF" />
+                    <item android:offset="1" android:color="#FF9B6CFF" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path
+            android:pathData="M85,26h8a2,2 0,0 1,2 2v8a2,2 0,0 1,-2 2h-8a2,2 0,0 1,-2 -2v-8a2,2 0,0 1,2 -2z"
+            android:fillColor="#FF22D3EE" />
+        <path
+            android:pathData="M85,91h8a2,2 0,0 1,2 2v8a2,2 0,0 1,-2 2h-8a2,2 0,0 1,-2 -2v-8a2,2 0,0 1,2 -2z"
+            android:fillColor="#FF9B6CFF" />
+        <path
+            android:pathData="M55,59h27v-9l20,14 -20,14v-9H55z"
+            android:fillColor="#FFFF7849" />
+    </group>
+</vector>

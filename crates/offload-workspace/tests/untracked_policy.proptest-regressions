@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc e4781f326f53ecda2b09ca1537d631453dbd88e1836974bfbba277d766a536b8 # shrinks to entries = [("src", 721193)], policy = UntrackedPolicy { max_file_bytes: 721193, max_total_bytes: 0, also_never_source: [] }

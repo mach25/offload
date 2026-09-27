@@ -1,0 +1,24 @@
+[package]
+name = "offload-workspace"
+description = "Git worktree management: one isolated, disposable workspace per agent run."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+offload-core = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { version = "1", features = ["process", "io-util", "rt", "macros", "sync"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+# The untracked-file policy is a pure function over (paths, sizes, policy), which is what
+# `offload-core` is arranged for and this module happens to share: a failing case is a panic
+# rather than a hang, so the fork/timeout machinery buys nothing.
+proptest = { workspace = true }
+
+[lints]
+workspace = true

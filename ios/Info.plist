@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>se.mach25.offload</string>
+	<key>CFBundleName</key>
+	<string>Offload</string>
+	<key>CFBundleDisplayName</key>
+	<string>Offload</string>
+	<key>CFBundleExecutable</key>
+	<string>Offload</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.0.1</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneSimulator</string>
+	</array>
+	<key>MinimumOSVersion</key>
+	<string>17.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Offload finds and talks to the other devices in your fleet on the local network.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_offload._udp</string>
+	</array>
+</dict>
+</plist>

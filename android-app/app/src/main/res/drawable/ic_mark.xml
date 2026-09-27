@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Offload mark, from assets/offload-logo.svg (transparent background), cropped to its bounds
+     for the app's top bar. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <group android:translateX="-12" android:translateY="-14">
+        <path
+            android:pathData="M91,25A46,46 0,1 0,91 103"
+            android:strokeWidth="14"
+            android:fillColor="#00000000">
+            <aapt:attr name="android:strokeColor">
+                <gradient android:type="linear" android:startX="28" android:startY="24"
+                    android:endX="96" android:endY="105">
+                    <item android:offset="0" android:color="#FF08BBD4" />
+                    <item android:offset="0.52" android:color="#FF3157E8" />
+                    <item android:offset="1" android:color="#FF7C3AED" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path android:pathData="M87,19h10a2,2 0,0 1,2 2v10a2,2 0,0 1,-2 2h-10a2,2 0,0 1,-2 -2v-10a2,2 0,0 1,2 -2z"
+            android:fillColor="#FF08BBD4" />
+        <path android:pathData="M87,96h10a2,2 0,0 1,2 2v10a2,2 0,0 1,-2 2h-10a2,2 0,0 1,-2 -2v-10a2,2 0,0 1,2 -2z"
+            android:fillColor="#FF7C3AED" />
+        <path android:pathData="M55,58h31v-11l24,17 -24,17v-11H55z" android:fillColor="#FFFF6B35" />
+    </group>
+</vector>

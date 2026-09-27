@@ -1,0 +1,35 @@
+[package]
+name = "offload-ios"
+description = "The iOS host's link to offloadd: the daemon as a static library with a two-function C ABI (ADR-0070)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+name = "offload_ios"
+# staticlib for the app to link; rlib so the workspace can test it like any other crate.
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+offload-node = { path = "../offload-node" }
+anyhow = { workspace = true }
+tokio = { version = "1", features = ["full"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+# The workspace's lints, with one exception: `unsafe_code` is `deny` here rather than `forbid`,
+# because a C entry point cannot be written without it (`#[no_mangle]` is itself unsafe, and so is
+# reading the one C string this ABI takes). It is allowed on exactly those lines, each with a SAFETY
+# note, in this crate alone. Everything else matches the workspace table and must stay in step.
+[lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+
+[lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+cast_possible_truncation = "warn"

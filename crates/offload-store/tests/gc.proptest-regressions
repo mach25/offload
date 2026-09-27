@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc cf59a8b9758e7d6990268d48af47f6f1dfef020c94d7836030765b9e18940a8e # shrinks to transcript = 0, passes = 1
+cc f7b8c7f803f515bf828130979ac3f94fe6cc6c1a4cfe34ed4e00d5071380bf79 # shrinks to shapes = [None, None, Some(Shape { transcript: 0, bundle: None, patch: None })], checkpointed = [false]

@@ -1,0 +1,22 @@
+[package]
+name = "offload-proto"
+description = "Wire messages between Offload nodes, and the rules for accepting a stranger."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+# Messages and their meaning, with no I/O of its own: framing is an incremental parser over
+# bytes somebody else read, and admission is a pure function of (credentials, fleet, now).
+# That is what lets the transport be swapped (ADR-0015) without any of this moving.
+[dependencies]
+offload-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+ed25519-dalek = { workspace = true }
