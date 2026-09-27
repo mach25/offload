@@ -166,6 +166,19 @@ cold. Highlights:
 
 ---
 
+## Publishing
+
+`main` is local and keeps the full history. The public repository gets one squashed commit per
+publish from the `public` branch, so nothing about the owner's setup that history holds is ever
+pushed. Tracked files must not carry it either: no real network addresses, home paths or
+usernames, device serials, account fingerprints, fleet or node ids, device models, or client
+project names. The owner's real values, and the grep that checks for them, are kept outside the
+repository; run it before every publish.
+
+Write documentation ranges (`192.0.2.x`, `2001:db8::`), `/home/owner`, `phone-app`, `tablet`,
+`PHONESERIAL`, "the phone", "a Samsung phone". Test fixtures use `example.com` and obviously fake
+ids.
+
 ## Commits
 
 Work goes **straight onto `main`**. There is no remote and nothing is pushed; a branch buys none

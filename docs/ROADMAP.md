@@ -20,7 +20,7 @@ and the questions still to answer.
 | 2 — Checkpoint and resume | **done**, 8/8 | migration mechanics before the network |
 | 3 — Two nodes see each other | **done**, 12/12 | `offload-transport`, `offload-cluster` |
 | 4 — Runs move between machines | **done**, 29/29 | built in `offload-cluster::place`, not `offload-sched` |
-| 5 — Off the LAN | 11/14, **demo run** | the demo walked on a Samsung phone in session ninety-two, off the LAN over mobile data; the four items below are open, two half-done |
+| 5 — Off the LAN | 12/14, **demo run** | the demo walked on a Samsung phone in session ninety-two, off the LAN over mobile data; the items below still open are relays and hole punching, and the mobile host process (half done: Android built, the iOS app not started) |
 | 6 — Hardening | 40/41 | only metrics left, deliberately |
 | 7 — Nice to have | not scheduled | recorded so they don't get invented mid-phase |
 | 8 — Work that is not an agent run | **built**, 7/7 | the `Work` split; the cheap tier the fleet exists to schedule. Demo run on two daemons (session sixty-eight); in ninety-two the **whole sentence over a real network**: the Samsung phone on mobile data, off the LAN, as the node with no agent — schedule, trigger, a person's failing task, its escalation placed on the laptop, the phone's own sink. **Done on real machines** |
@@ -64,7 +64,7 @@ runs the daemons.
       as applied and could not fire. The platform half is **done for Android** (session ninety-two): the app writes
       `BatteryManager` and `ConnectivityManager` answers to `host-facts.json`, and the phone read
       `on mains` and `unmetered` from them. Thermal state is untouched.
-- [ ] **Approvers in hardware** (ADR-0012; **ADR-0069 accepted, unbuilt**, session ninety-two).
+- [x] **Approvers in hardware** (ADR-0012; **ADR-0069, built and walked on the tablet**, session ninety-two; this line said *unbuilt* until ninety-four, while the ADR's own amendments recorded §4 and hardware re-approval as walked).
       Reshaped by the owner: renewal is a widely held, renew-only authority (every member, by
       default), approval is a person's act and lasts a year, and a hardware-backed approval key
       (P-256, StrongBox or TEE via the Android app) is an *option of any approver*, not the

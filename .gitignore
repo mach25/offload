@@ -16,3 +16,6 @@
 
 # Cross-built binaries staged for other devices (see scripts/build-*.sh).
 /dist
+
+# This owner's devices, addresses and ids: never committed (CLAUDE.md, agreement 8).
+/local

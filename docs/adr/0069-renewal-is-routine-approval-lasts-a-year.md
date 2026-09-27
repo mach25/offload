@@ -2,7 +2,7 @@
 
 **Status:** accepted · 2026-09-26 · session ninety-two · amends ADR-0012 (renewal, delegation,
 issuer) · builds phase 5's "approvers in hardware" as an option of any approver · **needs a wire
-bump** · unbuilt
+bump** · **built and walked** (the amendments below; this header said *unbuilt* until session ninety-four)
 
 ## Context
 

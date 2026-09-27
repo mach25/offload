@@ -19,7 +19,7 @@ Two binaries:
 - `docs/ARCHITECTURE.md` — the system model. Read before touching `offload-cluster`,
   `offload-cluster::place`, or `offload-agent`.
 - `docs/HANDOFF.md` — the live head: what is true now, and what to pick up. Short on purpose, and
-  read before starting anything.
+  read before starting anything. The owner's own fleet is in `local/SETUP.md` (not committed).
 - `docs/ROADMAP.md` — what is **not** built, and the open questions with the phase each blocks.
   Authoritative on both, and short. What a completed phase shipped is in `docs/phases.md`.
 - `docs/adr/` — settled decisions, and the reasoning that is easy to lose. Don't relitigate
@@ -55,7 +55,19 @@ Two binaries:
    would otherwise break, an ADR for a decision, a paragraph at the top of `docs/sessions.md`, and
    a replaced — not appended — pick-up list in `docs/HANDOFF.md`. `CONTRIBUTING.md` has the full
    table and the commit-message conventions.
-7. **Commit onto `main`.** No session branches, and nothing is pushed anywhere yet.
+7. **Commit onto `main`, which stays local.** No session branches. `origin` (github.com/mach25/offload,
+   public) is published from a separate branch, `public`, one squashed commit per publish, so the
+   private history never leaves this machine. **Never push `main`.** To publish: scrub first (no
+   real addresses, paths, serials, ids or device models; see `CONTRIBUTING.md`), then
+   `git commit-tree main^{tree} -p public -m …`, move `public` to it, and `git push origin
+   public:main` only when the owner asks.
+8. **The owner's setup is local, never committed.** Their devices, addresses, serials, account and
+   fleet ids, device models and client project names live in `local/` (gitignored):
+   `local/SETUP.md` for the fleet as it stands and how to reach each device, `local/forbidden.txt`
+   for the real values. Tracked files use placeholders (`192.0.2.x`, `phone-app`, `tablet`,
+   `PHONESERIAL`, `/home/owner`, "the phone"). A local pre-commit hook refuses a commit that adds
+   a listed value; it is a backstop, not the rule. Read `local/SETUP.md` before operating the
+   fleet. A checkout without `local/` belongs to somebody else: ask, never guess.
 
 ## Workspace layout
 

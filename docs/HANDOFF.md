@@ -24,7 +24,7 @@ Everything is on `main`. There are no other branches, and nothing has been pushe
   ninety); v29 `Gossip::schedules`; schema v13 is ADR-0067's `legs_json`. A number here is a stamp on a moment —
   `cargo test --workspace` says what is true today.
 - **Phases — `docs/ROADMAP.md` is the authority**, and this file does not restate its lists. 0–4
-  done; 5 at 10/14; 6 at 40/41 (metrics, deliberately); 8 built, demo run on two daemons; 9 at
+  done; 5 at 12/14; 6 at 40/41 (metrics, deliberately); 8 built, demo run on two daemons; 9 at
   6.5/7 (§6's fourth refusal deliberately unbuilt); **10 done** (ADR-0063 §2's weights walk, run in
   ninety-two on the laptop, the Mac and an emulated phone). The roadmap's own table has been wrong four times —
   re-measure an inherited `[x]` before reasoning from it.
@@ -79,27 +79,8 @@ phone**, and a stopped phone hears its news when it is opened. `docs/sessions.md
    was designed, built and deployed, and the owner declined it at "install ntfy on your phone".
    Name every install a design needs, on every device, when the choice is offered.
 
-**The fleets and devices, as left** (the details are in `docs/DEMO.md`):
-
-- **There is one fleet, `f1ee7001`** (consolidated in session ninety-four; everything before was
-  testing). The laptop's `/tmp/mw` node founded it and is its only approver. The owner has the
-  passphrase, and it is needed for every `host-runs` grant: an approver may never mint one. Members:
-  - `laptop`, `/tmp/mw`, a **real** agent on `~/.claude-alt`, `acct:0a0a0a0a…`, which owns `~/offload`;
-  - `macmini`, the Mac mini (macOS 27.0 since 2026-09-27): config `~/.config/offload/node.toml`, state `~/.offload`, checkouts
-    `~/offload`, a real agent on the same account, `host-runs` since session ninety-four. It runs as the launchd
-    LaunchAgent `se.mach25.offloadd` (`~/bin/offloadd`), built from `~/mach25-offload-host`. It
-    offers one program, `demo` (a `[[tasks]]` entry that says hello, echoes its arguments, and prints
-    uptime and free disk), so the app's "Run a program" has something to show;
-  - `phone-app`, the phone's product app;
-  - `tablet`, the tablet's product app, a fresh node since session ninety-four (`pm clear`, then
-    joined by link). The old tablet fleet `f1ee7002`, its TEE approval key and its pending email
-    run are gone;
-  - `emu-fresh`, the emulator's product app.
-  **Agent runs in this fleet cost real usage.** The test fleet `f1ee7003` and the `/tmp/hw`,
-  `/tmp/hw2` daemons were stopped. Their directories are left in `/tmp`, harmless.
-- **Every node is on wire v37** (session ninety-four): the laptop, the Mac and all three apps. The
-  tablet's app is one build behind (no "Resume is refused" removal): it was off USB. The Mac's stray walk
-  daemon on `~/.offload-w6` was stopped at the owner's request.
+**The owner's own fleet and devices** (which machines, how to reach them, what each runs) are in
+`local/SETUP.md`, which is **not committed**. A fresh checkout has none: ask the owner.
 
 **Next, in order:**
 

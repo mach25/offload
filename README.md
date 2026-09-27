@@ -18,8 +18,8 @@ Close the laptop, the agent keeps working on the desktop.
 ## This is a vibe-coded project
 
 Up front, because it changes how you should read everything below: **this codebase was written
-by an AI agent** (Claude Code), across seventeen working sessions, with a human directing rather
-than typing. That is the honest description, and there are two sides to it worth stating.
+by an AI agent** (Claude Code), across more than ninety working sessions, with a human directing
+rather than typing. That is the honest description, and there are two sides to it worth stating.
 
 The uncomfortable side: nobody has read every line. There is no second pair of human eyes on
 most of it, no production deployment, no users but its author, and no security review. Do not
@@ -27,18 +27,19 @@ put anything you care about behind it yet.
 
 The other side, which is why the project exists at all: an agent that writes a distributed system
 this fast will also confidently write one that loses your work. So the discipline is aimed
-squarely at that — decisions are written down as ADRs *before* they are built, every rule that
-can be mechanically enforced is (clock injection, allowlist scoping, migration digests, one
-daemon per state directory), and the last three sessions have done nothing but aim property tests
-at surfaces the code makes claims about. Those found sixteen real bugs so far, most of them work
-the fleet was silently throwing away: two agents able to run on one repository, a blob collector
-deleting the checkpoints of live runs, a run resumed from a checkout nineteen turns out of date,
-`offload rm` telling the whole fleet it had deleted a worktree on a machine it had never touched,
-and — on the laptop this is written on — a battery probe reporting the *touchscreen's* battery as
-the machine's, 0% while the real one sat at 98%.
+squarely at that. Decisions are written down as ADRs *before* they are built. Every rule that can
+be mechanically enforced is (clock injection, allowlist scoping, migration digests, one daemon per
+state directory). And every claim the tree makes is walked on real machines: two daemons, a Mac,
+an Android phone and tablet, read line by line. That has found a long list of real bugs, most of
+them work the fleet was silently throwing away: two agents able to run on one repository, a blob
+collector deleting the checkpoints of live runs, a run resumed from a checkout nineteen turns out
+of date, a finished run that a device coming back online could quietly reopen elsewhere, a
+phone's notifications given up on in ten seconds while it was merely asleep, and a battery probe
+reporting the *touchscreen's* battery as the machine's, 0% while the real one sat at 98%.
 
-Every one of those was found by writing down what the tree *claimed* and then testing the
-sentence. That method is the actual subject of this repository, more than the scheduler is.
+Each of those mistakes is written down in `docs/pitfalls/`, now several hundred rules long,
+beside how it was found. That method, writing down what the tree *claims* and then testing the
+sentence, is the actual subject of this repository, more than the scheduler is.
 
 ---
 
@@ -46,33 +47,41 @@ sentence. That method is the actual subject of this repository, more than the sc
 
 **Not released, and not packaged.** Build it from source. There are no prebuilt binaries, no
 installer, no crates.io release, and no stability promise about the wire protocol or the on-disk
-schema — the wire is at v20 and every version bump so far has meant "upgrade every node".
+schema. The wire is at v37, and every version bump so far has meant "upgrade every node".
 
-What is built and verified end to end:
+What is built and walked end to end:
 
-- **Phases 0–4** — the domain model, a single-node agent runner, checkpoint and resume, a real
-  mesh (QUIC, ed25519 identities, gossip, SWIM failure detection, mDNS discovery), and runs that
-  **move between machines mid-conversation**.
-- **Phase 5, most of it** — enrolment by invitation, revocation that travels, certificate
-  renewal, `offload rekey`, and the delivery plane: a run finishing on a machine with no way to
-  reach a person, reported by a phone that hosts nothing.
-- **Phase 6, in progress** — property tests, and the bugs they keep finding.
+- **Runs that move between machines mid-conversation** (phases 0–4): the domain model, a
+  single-node agent runner, checkpoint and resume, a real mesh (QUIC, ed25519 identities, gossip,
+  an adaptive SWIM failure detector, mDNS discovery), and placement by bidding.
+- **A fleet you can own** (phase 5, most of it): enrolment by invitation, revocation that
+  travels, certificate renewal, `offload rekey`, approvers (including a key held in an Android
+  device's secure hardware), and the delivery plane, which gets a run's news to a person on
+  whichever device can reach them. Walked off the LAN, over IPv6 and mobile data.
+- **Work that is not an agent run** (phase 8): *tasks*, programs a device's owner nominates,
+  placed by the same bid round; *rules* that fire runs when something happens; *schedules* that
+  outlive the device that wrote them.
+- **Workspaces that are not repositories** (phase 9), and **work you dispatch and come back to**
+  (phase 10): `offload continue`, placement preferences and holds.
+- **Apps and hosts**: an Android app that hosts a node, submits agent runs and programs, lists the
+  models the fleet's agents offer, answers an agent's questions and shows what each run did and
+  where. macOS runs the daemon as a launchd service and keeps the machine awake while it may take
+  work. iOS has a host library; its app is not started.
 
-What is not built: NAT traversal and relays (so it is a LAN today), the mobile host process,
-approver keys in secure hardware, `turmoil` simulation, and metrics.
-
-`docs/ROADMAP.md` says what is not built yet and what is still to decide; `docs/phases.md` says what
-each completed phase shipped. `docs/HANDOFF.md` says where the last session stopped, and
-`docs/sessions.md` what each one got wrong on the way.
+What is not built: relays and hole punching (so off the LAN needs a routable address or a node
+that can be dialled), push notifications (a phone hears its news when the app is opened), the
+iOS app, metrics, and any packaging. `docs/ROADMAP.md` is the authority on what is left and what
+is still to decide; `docs/phases.md` says what each completed phase shipped. `docs/HANDOFF.md`
+says where the last session stopped, and `docs/sessions.md` what each one got wrong on the way.
 
 ## Try it
 
 Rust stable (see `rust-toolchain.toml`; the workspace's MSRV is 1.85), and
-[Claude Code](https://claude.com/claude-code) on `PATH` for anything that runs an agent.
+[Claude Code](https://claude.com/claude-code) for anything that runs an agent.
 
 ```bash
 cargo build --workspace
-cargo test --workspace          # 713 tests
+cargo test --workspace          # over a thousand tests
 ```
 
 Local questions need no daemon at all:
@@ -84,7 +93,8 @@ cargo run -p offload-cli -- match "cores>=8"      # …and does it qualify, clau
 ```
 
 A real run, on one machine. `cargo build` puts `offload` and `offloadd` in `target/debug/`;
-put that on your `PATH` or spell the commands `cargo run -p offload-cli -- …`:
+put that on your `PATH` or spell the commands `cargo run -p offload-cli -- …`. The daemon reads
+`~/.config/offload/node.toml` if there is one and keeps its state in `~/.offload`:
 
 ```bash
 offloadd                                                      # the daemon
@@ -93,9 +103,11 @@ offload ps --all                                              # survives a daemo
 offload logs -f <run>
 offload checkpoint <run>                                      # capture at the next turn boundary
 offload resume <run> --follow                                 # continue the same conversation
+offload continue <run> "now add a changelog entry"            # a new run that picks up from it
+offload models                                                # what the agents here offer
 ```
 
-A fleet. Membership is a passphrase, not a server — a certificate verifies against the fleet key
+A fleet. Membership is a passphrase, not a server: a certificate verifies against the fleet key
 alone, so enrolling needs no network:
 
 ```bash
@@ -108,31 +120,38 @@ offload drain                       # hand this node's runs to the fleet, mid-co
 offload explain <run>               # why it is where it is
 ```
 
-`OFFLOAD_STATE_DIR` relocates everything, which is how you run two nodes on one machine — and how
-every multi-node test in `docs/DEMO.md` was actually run.
+Programs instead of agents: nominate one in a device's `node.toml` as a `[[tasks]]` entry, then
+`offload run --task <name>` from any device, `offload when` to fire it on an event, or
+`offload every` to put it on a clock.
+
+`OFFLOAD_STATE_DIR` relocates everything, which is how you run two nodes on one machine, and how
+most of the multi-node walks in `docs/DEMO.md` were run. The Android app builds with
+`scripts/build-android-product.sh`; `scripts/install-macos-service.sh` installs the daemon as a
+launchd service on a Mac.
 
 ## How it is put together
 
 Two binaries: `offloadd`, the node daemon, one per device; and `offload`, the operator CLI.
 
-Ten crates, with the dependency direction strictly downward. `offload-core` is the whole
+Thirteen crates, with the dependency direction strictly downward. `offload-core` is the whole
 domain model — the run state machine, epoch fencing, leases, bidding, constraints, capacity — and
 it has no I/O, no tokio, no networking and **no clock**, which is what makes the simulation tests
 possible. There is a test that reads the crate's own source to keep it that way.
 
-The pieces that carry the design:
-
 | | |
 |---|---|
 | `offload-core` | domain types, and every decision as a pure function of (view, run, now) |
-| `offload-agent` | agent adapters — spawn, stream events, turn boundaries, resume |
+| `offload-agent` | agent adapters: spawn, stream events, turn boundaries, resume, the agent's model list |
 | `offload-workspace` | per-run git worktrees over a shared per-repo bare mirror |
-| `offload-store` | SQLite: run registry, event log, blobs, absence history |
-| `offload-cluster` | membership, gossip, failure detection, discovery |
-| `offload-node` | the daemon: config, control socket, run supervision |
+| `offload-store` | SQLite: run registry, event log, blobs, absence history, audit log |
+| `offload-proto`, `offload-transport` | wire messages and version negotiation; QUIC and in-memory transports |
+| `offload-cluster` | membership, gossip, failure detection, discovery, and the bid round |
+| `offload-node` | the daemon: config, control socket, run supervision, delivery |
+| `offload-probe`, `offload-power` | what a device is and has; keeping a host awake |
+| `offload-cli`, `offload-mobile`, `offload-ios` | the CLI; the apps' client; the iOS host library |
 
 Read `docs/ARCHITECTURE.md` for the system model, and `docs/adr/` for the decisions and the
-reasoning behind them — seventeen of them, each one a thing that was easy to get wrong.
+reasoning behind them: eighty of them, each one a thing that was easy to get wrong.
 
 A few of the rules those settle, as a flavour of what the problem actually is:
 
