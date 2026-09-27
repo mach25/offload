@@ -1427,6 +1427,27 @@ mod tests {
         }
     }
 
+    /// Commit everything staged, as a test author. A run's worktree has no identity of its own,
+    /// and a CI runner has no global one: a bare `git commit` there fails with "Author identity
+    /// unknown" while passing on any developer's machine.
+    async fn commit(at: &Path, message: &str) {
+        git(
+            Some(at),
+            &[
+                "-c",
+                "user.name=Offload Test",
+                "-c",
+                "user.email=test@offload.local",
+                "commit",
+                "--quiet",
+                "-m",
+                message,
+            ],
+        )
+        .await
+        .expect("commit");
+    }
+
     /// Build a real git repo with one commit. These tests drive actual git — worktree
     /// semantics are exactly the kind of thing that looks right in a mock and isn't.
     async fn source_repo(at: &Path) -> RepoSource {
@@ -1442,9 +1463,7 @@ mod tests {
             .expect("config name");
         std::fs::write(at.join("README.md"), "hello\n").expect("write");
         git(Some(at), &["add", "."]).await.expect("add");
-        git(Some(at), &["commit", "--quiet", "-m", "initial"])
-            .await
-            .expect("commit");
+        commit(at, "initial").await;
         RepoSource::Local(at.to_path_buf())
     }
 
@@ -1538,9 +1557,7 @@ mod tests {
         source_repo(&tree).await;
         std::fs::write(tree.join("second.txt"), "more\n").expect("write");
         git(Some(&tree), &["add", "."]).await.expect("add");
-        git(Some(&tree), &["commit", "--quiet", "-m", "second"])
-            .await
-            .expect("commit");
+        commit(&tree, "second").await;
 
         let (source, tarball) = archive_of(&tree, &scratch.0, 2).await;
         mgr.ensure_archive_mirror(&source, &tarball)
@@ -1972,16 +1989,12 @@ mod tests {
             .expect("prepare");
         std::fs::write(ws.path.join("work.txt"), "agent output\n").expect("write");
         git(Some(&ws.path), &["add", "."]).await.expect("add");
-        git(Some(&ws.path), &["commit", "--quiet", "-m", "agent work"])
-            .await
-            .expect("commit");
+        commit(&ws.path, "agent work").await;
 
         // Something changes upstream, and we refresh.
         std::fs::write(src.join("other.txt"), "upstream\n").expect("write");
         git(Some(&src), &["add", "."]).await.expect("add");
-        git(Some(&src), &["commit", "--quiet", "-m", "upstream change"])
-            .await
-            .expect("commit");
+        commit(&src, "upstream change").await;
         mgr.ensure_mirror(&source).await.expect("refresh");
 
         let branches = git(
@@ -2027,9 +2040,7 @@ mod tests {
         assert_eq!(status.commits_ahead, 0);
 
         git(Some(&ws.path), &["add", "."]).await.expect("add");
-        git(Some(&ws.path), &["commit", "--quiet", "-m", "work"])
-            .await
-            .expect("commit");
+        commit(&ws.path, "work").await;
 
         let status = mgr.status(&ws).await.expect("status");
         assert!(!status.is_dirty());
@@ -2102,9 +2113,7 @@ mod tests {
         )
         .expect("write");
         git(Some(&ws.path), &["add", "."]).await.expect("add");
-        git(Some(&ws.path), &["commit", "--quiet", "-m", "work"])
-            .await
-            .expect("commit");
+        commit(&ws.path, "work").await;
         // …and this is the part nothing anywhere else has a copy of.
         std::fs::write(
             ws.path.join("committed.txt"),
@@ -2155,9 +2164,7 @@ mod tests {
         )
         .expect("write");
         git(Some(&ws.path), &["add", "."]).await.expect("add");
-        git(Some(&ws.path), &["commit", "--quiet", "-m", "work"])
-            .await
-            .expect("commit");
+        commit(&ws.path, "work").await;
 
         assert_eq!(
             mgr.hold(run).await.remove(&source).await.expect("remove"),
@@ -2182,9 +2189,7 @@ mod tests {
             .expect("prepare");
         std::fs::write(ws.path.join("work.txt"), "x\n").expect("write");
         git(Some(&ws.path), &["add", "."]).await.expect("add");
-        git(Some(&ws.path), &["commit", "--quiet", "-m", "work"])
-            .await
-            .expect("commit");
+        commit(&ws.path, "work").await;
 
         mgr.hold(run).await.remove(&source).await.expect("remove");
         assert!(!ws.path.exists(), "worktree directory gone");
@@ -2236,9 +2241,7 @@ mod tests {
         assert_eq!(mgr.holds_uncommitted(run).await, Some(true));
 
         git(Some(&ws.path), &["add", "."]).await.expect("add");
-        git(Some(&ws.path), &["commit", "--quiet", "-m", "work"])
-            .await
-            .expect("commit");
+        commit(&ws.path, "work").await;
         assert_eq!(
             mgr.holds_uncommitted(run).await,
             Some(false),
@@ -2432,9 +2435,7 @@ mod tests {
             .expect("name");
         std::fs::write(ws.path.join("committed.rs"), "fn kept() {}\n").expect("write");
         git(Some(&ws.path), &["add", "."]).await.expect("add");
-        git(Some(&ws.path), &["commit", "--quiet", "-m", "leg one"])
-            .await
-            .expect("commit");
+        commit(&ws.path, "leg one").await;
         mgr.note_turn(run, 1);
 
         // The staging is the same as the rescue's: this leg is behind the checkpoint being
