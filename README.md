@@ -90,6 +90,9 @@ The models are the ones the fleet's agents report, read from each device's own C
 (ADR-0080), and the programs are whatever the devices' owners nominated. The screenshots are a
 demo fleet on the Android emulator, with a stand-in agent.
 
+It is not on Google Play: **[docs/ANDROID.md](docs/ANDROID.md)** says how to build it, put it on
+your phone and join it to your fleet.
+
 ## Try it
 
 Rust stable (see `rust-toolchain.toml`; the workspace's MSRV is 1.85), and
@@ -141,8 +144,8 @@ Programs instead of agents: nominate one in a device's `node.toml` as a `[[tasks
 `offload every` to put it on a clock.
 
 `OFFLOAD_STATE_DIR` relocates everything, which is how you run two nodes on one machine, and how
-most of the multi-node walks in `docs/DEMO.md` were run. The Android app builds with
-`scripts/build-android-product.sh`; `scripts/install-macos-service.sh` installs the daemon as a
+most of the multi-node walks in `docs/DEMO.md` were run. The Android app has its own guide,
+[docs/ANDROID.md](docs/ANDROID.md); `scripts/install-macos-service.sh` installs the daemon as a
 launchd service on a Mac.
 
 ## How it is put together
