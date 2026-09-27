@@ -279,3 +279,10 @@ Working rules. Full entries — mechanism, measurement, how each was found — i
   `kill_args` in `offload-agent`'s `claude.rs` and pinned by
   `a_process_group_is_signalled_with_the_options_ended_first`. A job canceled with no failure
   is something in the job signalling the runner. Find it by tracing signals, not by bisecting tests.
+- **A test that commits brings its own identity.** A developer's machine has a global
+  `user.email`; a CI runner has none, and a run's worktree has none of its own. So six
+  `offload-workspace` tests passed everywhere they were ever run and failed on the first runner
+  with "Author identity unknown". They commit through the tests' `commit` helper, which passes
+  `-c user.name=… -c user.email=…`. To reproduce CI's git locally, run the suite under
+  `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1`, with `--no-fail-fast` so one failing crate
+  does not hide the next.

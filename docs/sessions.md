@@ -83,7 +83,9 @@ branch caught a supervisor test running `kill -15 -13747` to stop its fake agent
 delivered that SIGTERM to the runner's own listener. The laptop's `kill` parses the same line as
 a process group, which is why only CI saw it. The lesson: a job canceled mid-test is something in the job
 signalling the runner. Trace the signals rather than bisecting the tests. Bisecting would have
-pointed at whichever test happened to be running.
+pointed at whichever test happened to be running. With that fixed, the suite reached the end on a runner
+for the first time and failed a third way: six workspace tests committed with no git identity,
+which only the laptop's global config had been supplying.
 
 ## Session ninety-three, the phone left on the table
 

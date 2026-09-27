@@ -488,3 +488,13 @@ the instrument constant across arms" from `91a3581`. Their commit messages are t
   util-linux's `kill` on the development laptop parses it as a group, so no local run ever showed
   it. Both man pages document `kill -s SIGNAL -- -PGID`. The fix builds exactly that, and a second
   test checks that a group leader and its child both stop.
+
+- **The third CI failure was the laptop's own git config.** With the `kill` fix in, the whole
+  suite ran to the end on a runner for the first time, and six `offload-workspace` tests failed
+  at `.expect("commit")`. `source_repo` sets an identity in the fixture repository, but the tests
+  then commit inside the run's *worktree*, which is a different checkout with no identity of its
+  own. On the laptop the global config supplied one. Under `GIT_CONFIG_GLOBAL=/dev/null
+  GIT_CONFIG_NOSYSTEM=1` the same six failed locally, with the same message, and the other 58
+  passed. After the fix, the whole workspace under those variables with `--no-fail-fast` had no
+  failures. That matters because `cargo test` stops at the first failing test binary, so a CI run
+  that fails in one crate says nothing about the crates after it.
