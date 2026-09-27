@@ -264,3 +264,10 @@ Working rules. Full entries — mechanism, measurement, how each was found — i
   debugging holds `AdbMulticastLock` (uid 1000) the whole time it is connected. ADR-0078 read a
   night's "multicast lock held all night" as Offload's, and half of it was adb's. Read the per-uid
   lines of `dumpsys batterystats` and `dumpsys wifi`'s lock holders, not the total.
+- **A test that writes a program and then runs it can find it "busy".** Another thread of the
+  test process forks between the write and the exec, the child holds a copy of the write handle
+  until its own exec, and the kernel refuses to run a file open for writing (`ETXTBSY`). Rare on
+  a laptop, and a four-core CI runner hit it on the first rerun. Every program the node starts goes
+  through `offload_agent::claude::spawn_when_not_busy`, which retries for half a second. It is
+  pinned by `a_program_held_open_for_writing_a_moment_longer_is_waited_for`, whose control run with
+  no retries fails with CI's exact `Text file busy (os error 26)`.

@@ -543,8 +543,7 @@ impl ChildChannel {
         #[cfg(unix)]
         command.process_group(0);
 
-        let mut child = command
-            .spawn()
+        let mut child = offload_agent::claude::spawn_when_not_busy(|| command.spawn())
             .map_err(|e| format!("{}: {e}", cfg.command))?;
         let stdin = child.stdin.take();
         let stdout = child

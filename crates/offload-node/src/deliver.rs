@@ -219,7 +219,8 @@ impl Sink for ExecSink {
         #[cfg(unix)]
         cmd.process_group(0);
 
-        let mut child = cmd.spawn().map_err(|e| e.to_string())?;
+        let mut child = offload_agent::claude::spawn_when_not_busy(|| cmd.spawn())
+            .map_err(|e| e.to_string())?;
         if let Some(mut stdin) = child.stdin.take() {
             use tokio::io::AsyncWriteExt;
             // A sink that does not read stdin is normal, so a broken pipe here is not a
