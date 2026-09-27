@@ -464,3 +464,14 @@ the instrument constant across arms" from `91a3581`. Their commit messages are t
   5h11m. On 2026-09-27, with Offload's daemon stopped, `dumpsys wifi` listed exactly one holder,
   `Multicaster{AdbMulticastLock uid=1000}`, which is wireless debugging, and the afternoon's total
   was 4h19m of which adb's was 4h00m and Offload's 3m.
+- **A test that writes a program and then runs it can find it "busy".** Found by the first CI
+  workflow, a GitHub Actions `cargo test` on a four-core runner, on its rerun:
+  `an_agent_that_refuses_to_list_its_models_says_why` failed with `could not start the agent: Text
+  file busy (os error 26)`. The same shape had been carried in HANDOFF as an unexplained `spawn`
+  failure in `the_agent_is_told_where_its_state_is_rather_than_left_to_inherit_it`, "`ETXTBSY` …
+  fits, and is a guess". It is the fork race: Rust opens the script with `O_CLOEXEC`, but between
+  another thread's `fork` and `exec` the child still holds the descriptor. The retry went into
+  the code rather than the tests because the failing spawn is inside the code under test, and
+  because Claude Code updating itself in place is the same error in production. The five spawn
+  sites (agent, model list, task, trigger, delivery route, resource server) share one helper. After
+  the fix, 20 runs of `offload-agent`'s tests at 16 threads had no failures.

@@ -205,12 +205,10 @@ gossip ageing and the adaptive failure detector, with no ADR (pitfalls in `gossi
 - One unexplained failure in ~80 runs of the ADR-0052 race test; its assertion now says which side
   of the guard it landed on. **Re-measured session ninety-two: 0 in 800**, 600 of them ten at a time
   at load ~10. Not closed — just now below one in a few hundred.
-- `offload-agent`'s `the_agent_is_told_where_its_state_is_rather_than_left_to_inherit_it` failed
-  once at its `spawn` (`claude.rs`, the `expect("spawn")`) in a workspace run beside a 20 000-case
-  property run, and then passed in 1 280 runs of its binary (up to 16 at a time, 40 threads each)
-  and a full workspace run. Its message was lost to an output filter. `ETXTBSY` from writing a
-  script and exec'ing it while another test forks fits, and is a guess; the `expect` prints the
-  error, so the next failure names itself.
+- **Explained and fixed in session ninety-four:** the unexplained `spawn` failure in
+  `offload-agent`'s tests was `ETXTBSY`, the fork race when a test writes a program and runs it.
+  The first CI run caught it; every spawn now retries a busy program briefly
+  (`spawn_when_not_busy`, `testing-and-sweeps`).
 
 **Noticed, not defects.** A one-shot `offload logs` from a peer counts as attendance for
 `WATCHER_GRACE` (10 s), the same as `logs -f`: in session ninety-two it made a restarted task's

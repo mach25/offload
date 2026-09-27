@@ -244,7 +244,8 @@ async fn run_once(
     #[cfg(unix)]
     cmd.process_group(0);
 
-    let mut child = cmd.spawn().map_err(|e| e.to_string())?;
+    let mut child =
+        offload_agent::claude::spawn_when_not_busy(|| cmd.spawn()).map_err(|e| e.to_string())?;
     triggers.update(&cfg.id, |state| {
         state.watching = true;
         state.last_error = None;
