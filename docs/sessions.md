@@ -68,6 +68,13 @@ reopen the run in another node's store, because "finished is finished" lived onl
 forgets finished runs. The walk caught the second one only because it checked the laptop's copy
 as well as the tablet's.
 
+Finally the repository went public, and the question was what a published repository asks of
+the documents. The owner's setup was scrubbed from every tracked file and moved to a gitignored
+`local/`, with local hooks that check each commit and push against it. Then the owner pointed
+out that contributors will mostly arrive with an agent of their own, and that agent reads
+`CLAUDE.md`, which told it to commit onto `main`. The rule is now branch and pull request, for
+everyone.
+
 ## Session ninety-three, the phone left on the table
 
 The phone lost half its battery overnight against the owner's usual 2%. `batterystats` put

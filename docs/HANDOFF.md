@@ -16,7 +16,8 @@ every pick-up item, residual and "do not re-walk" subject below was carried over
 
 ## State of the tree
 
-Everything is on `main`. There are no other branches, and nothing has been pushed anywhere.
+`main` is the public history (github.com/mach25/offload) and changes only by a merged pull request
+(`CLAUDE.md`, agreement 7).
 
 - **1138 tests, clippy clean, wire v37, schema v13** at the end of session ninety-four. v37 is
   ADR-0080 (`AgentDetails::models` as the agent's own named list, `Gossip::models_asked`), v36
