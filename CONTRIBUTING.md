@@ -179,6 +179,11 @@ Write documentation ranges (`192.0.2.x`, `2001:db8::`), `/home/owner`, `phone-ap
 `PHONESERIAL`, "the phone", "a Samsung phone". Test fixtures use `example.com` and obviously fake
 ids.
 
+**Screenshots** come from a demo fleet, never the owner's: a throwaway daemon with a stand-in agent
+and the Android emulator, its status bar frozen with SystemUI demo mode. Found it with
+`offload init --name …`: without `--name`, the node's certificate is named after the machine's
+hostname, and that name is on every screen that lists devices.
+
 ## Commits
 
 Work goes **straight onto `main`**. There is no remote and nothing is pushed; a branch buys none

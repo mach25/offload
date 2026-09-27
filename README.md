@@ -63,16 +63,32 @@ What is built and walked end to end:
   outlive the device that wrote them.
 - **Workspaces that are not repositories** (phase 9), and **work you dispatch and come back to**
   (phase 10): `offload continue`, placement preferences and holds.
-- **Apps and hosts**: an Android app that hosts a node, submits agent runs and programs, lists the
-  models the fleet's agents offer, answers an agent's questions and shows what each run did and
-  where. macOS runs the daemon as a launchd service and keeps the machine awake while it may take
-  work. iOS has a host library; its app is not started.
+- **Apps and hosts**: an Android app that hosts a node (below). macOS runs the daemon as a
+  launchd service and keeps the machine awake while it may take work. iOS has a host library; its
+  app is not started.
 
 What is not built: relays and hole punching (so off the LAN needs a routable address or a node
 that can be dialled), push notifications (a phone hears its news when the app is opened), the
 iOS app, metrics, and any packaging. `docs/ROADMAP.md` is the authority on what is left and what
 is still to decide; `docs/phases.md` says what each completed phase shipped. `docs/HANDOFF.md`
 says where the last session stopped, and `docs/sessions.md` what each one got wrong on the way.
+
+## The app
+
+An Android app (`android-app/`) is the everyday way to use a fleet from a phone. It hosts a node of
+its own, so the phone is a member rather than a remote control: you ask an agent for something, or
+run one of the programs your devices offer, and the fleet decides which machine does it. The app
+shows who took each run, with which model, what it cost and what it answered, and it can put a
+question from a blocked agent in front of you. It stops its node when you leave it, unless it is
+running something or you ask it to stay (Settings → *In the background*).
+
+| Your runs | A run's details | Choosing a model | Running a program |
+|:-:|:-:|:-:|:-:|
+| <img src="assets/screenshots/runs.png" width="200" alt="The runs list: four finished runs, each saying which device ran it and with which model"> | <img src="assets/screenshots/run-details.png" width="200" alt="A run's details: where it ran, the model, the agent version, cost and the agent's answer"> | <img src="assets/screenshots/model-picker.png" width="200" alt="The model picker, listing the models the fleet's agents offer"> | <img src="assets/screenshots/run-a-program.png" width="200" alt="Run a program: the programs the fleet offers, and which device offers the one chosen"> |
+
+The models are the ones the fleet's agents report, read from each device's own Claude Code
+(ADR-0080), and the programs are whatever the devices' owners nominated. The screenshots are a
+demo fleet on the Android emulator, with a stand-in agent.
 
 ## Try it
 
