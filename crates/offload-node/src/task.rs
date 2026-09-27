@@ -355,10 +355,13 @@ pub async fn spawn_task(
         program = %program.display(),
         "spawning a task"
     );
-    let mut child = command.spawn().map_err(|e| TaskError::Spawn {
-        task: cfg.id.clone(),
-        reason: e.to_string(),
-    })?;
+    let mut child =
+        offload_agent::claude::spawn_when_not_busy(|| command.spawn()).map_err(|e| {
+            TaskError::Spawn {
+                task: cfg.id.clone(),
+                reason: e.to_string(),
+            }
+        })?;
 
     let stdout = child.stdout.take().ok_or_else(|| TaskError::Spawn {
         task: cfg.id.clone(),

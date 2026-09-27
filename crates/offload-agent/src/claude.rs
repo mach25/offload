@@ -88,7 +88,8 @@ impl ClaudeCode {
         timeout: std::time::Duration,
     ) -> Result<Vec<offload_core::Model>, AgentError> {
         use std::io::{BufRead, Write};
-        let mut child = std::process::Command::new(&self.binary)
+        let mut command = std::process::Command::new(&self.binary);
+        command
             .args([
                 "-p",
                 "--input-format",
@@ -103,8 +104,8 @@ impl ClaudeCode {
             .current_dir(std::env::temp_dir())
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::null())
-            .spawn()
+            .stderr(Stdio::null());
+        let mut child = spawn_when_not_busy(|| command.spawn())
             .map_err(|e| AgentError::Models(format!("could not start the agent: {e}")))?;
         if let Some(mut stdin) = child.stdin.take() {
             let wrote = writeln!(stdin, "{MODELS_REQUEST}");
@@ -180,7 +181,7 @@ impl ClaudeCode {
         #[cfg(unix)]
         cmd.process_group(0);
 
-        let mut child = cmd.spawn().map_err(|e| {
+        let mut child = spawn_when_not_busy(|| cmd.spawn()).map_err(|e| {
             if e.kind() == std::io::ErrorKind::NotFound {
                 AgentError::NotInstalled {
                     binary: self.binary.display().to_string(),
@@ -383,6 +384,44 @@ fn signal_group(pid: u32, signal: i32) {
         .stderr(Stdio::null())
         .status();
 }
+
+/// A program the kernel will not execute because something has it open for writing
+/// (`ETXTBSY`, "Text file busy").
+///
+/// Two ways to get there, both passing: Claude Code updating itself in place, and — measured on a
+/// four-core CI runner — a test that has just written a fake agent while another thread of the
+/// same process forks, so the new child holds a copy of the write handle until it execs. The
+/// window is microseconds, so a short retry closes it; failing the spawn made a run or a model
+/// read fail for a reason that was gone a moment later (`an_agent_that_refuses_to_list_its_models_says_why`,
+/// and the `spawn` failure `docs/HANDOFF.md` carried as a guess for several sessions).
+fn busy(e: &std::io::Error) -> bool {
+    e.kind() == std::io::ErrorKind::ExecutableFileBusy
+}
+
+/// Start a program, trying again for up to half a second while the kernel calls it busy (see
+/// [`busy`]). For every program the node starts: an agent, a task, a watcher, a delivery route, a
+/// resource's server. Sleeps only in that case, so on an async task it blocks for a moment only
+/// when the alternative was failing the spawn.
+///
+/// # Errors
+///
+/// The spawn's own error, once it is not `ExecutableFileBusy` or the retries are spent.
+pub fn spawn_when_not_busy<T>(mut spawn: impl FnMut() -> std::io::Result<T>) -> std::io::Result<T> {
+    let mut attempt = 0;
+    loop {
+        match spawn() {
+            Err(e) if busy(&e) && attempt < BUSY_RETRIES => {
+                attempt += 1;
+                std::thread::sleep(BUSY_WAIT);
+            }
+            other => return other,
+        }
+    }
+}
+
+/// How often, and how far apart, a busy program is tried again: half a second in all.
+const BUSY_RETRIES: u32 = 20;
+const BUSY_WAIT: std::time::Duration = std::time::Duration::from_millis(25);
 
 /// How long [`ClaudeCode::models`] waits for the agent's answer. Measured at about 2 s; the rest
 /// is room for a slow disk or a first start, not for a network the answer does not need.
@@ -1170,5 +1209,27 @@ mod tests {
             err.to_string(),
             "the agent exited without listing its models"
         );
+    }
+
+    #[test]
+    fn a_program_held_open_for_writing_a_moment_longer_is_waited_for() {
+        // The CI failure, made deterministic: something still has the fake agent open for writing
+        // when it is run ("Text file busy"). Released a moment later, the read must succeed
+        // rather than fail for a reason that is already gone.
+        let answer = r#"{"type":"control_response","response":{"subtype":"success","request_id":"offload-models","response":{"models":[{"value":"haiku","displayName":"Haiku 4.5"}]}}}"#;
+        let (dir, agent) = models_agent("busy", &format!("echo '{answer}'"));
+        let writer = std::fs::OpenOptions::new()
+            .append(true)
+            .open(dir.join("agent"))
+            .expect("hold it open for writing");
+        let release = std::thread::spawn(move || {
+            std::thread::sleep(std::time::Duration::from_millis(150));
+            drop(writer);
+        });
+        let models = agent
+            .models_within(std::time::Duration::from_secs(10))
+            .expect("waited for the writer, then read the list");
+        release.join().expect("release");
+        assert_eq!(models.len(), 1);
     }
 }
