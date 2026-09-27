@@ -75,6 +75,16 @@ out that contributors will mostly arrive with an agent of their own, and that ag
 `CLAUDE.md`, which told it to commit onto `main`. The rule is now branch and pull request, for
 everyone.
 
+The owner's first CI workflow failed twice, and neither failure was in the code under test. The
+first was `ETXTBSY`: a test writes a script and runs it, another thread's `fork` still holds the
+file open, and the kernel refuses to run it. Every spawn now retries a busy program briefly. The
+second was "The operation was canceled" with no failing test. A root `bpftrace` on a throwaway
+branch caught a supervisor test running `kill -15 -13747` to stop its fake agent. Ubuntu's `kill`
+delivered that SIGTERM to the runner's own listener. The laptop's `kill` parses the same line as
+a process group, which is why only CI saw it. The lesson: a job canceled mid-test is something in the job
+signalling the runner. Trace the signals rather than bisecting the tests. Bisecting would have
+pointed at whichever test happened to be running.
+
 ## Session ninety-three, the phone left on the table
 
 The phone lost half its battery overnight against the owner's usual 2%. `batterystats` put

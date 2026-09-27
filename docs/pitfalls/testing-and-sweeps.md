@@ -271,3 +271,11 @@ Working rules. Full entries — mechanism, measurement, how each was found — i
   through `offload_agent::claude::spawn_when_not_busy`, which retries for half a second. It is
   pinned by `a_program_held_open_for_writing_a_moment_longer_is_waited_for`, whose control run with
   no retries fails with CI's exact `Text file busy (os error 26)`.
+- **Signal a process group as `kill -s <sig> -- -<pgid>`, never `kill -<sig> -<pgid>`.** Without
+  `--`, what a negative number means depends on which `kill` is installed. util-linux's (this
+  laptop's Fedora) reads it as a group; procps-ng's (Ubuntu, so every GitHub runner) sent a test's
+  SIGTERM to the runner's own `Runner.Listener`, and each CI run ended "The operation was
+  canceled" mid-test, with no failing test to show for it. The arguments are built by
+  `kill_args` in `offload-agent`'s `claude.rs` and pinned by
+  `a_process_group_is_signalled_with_the_options_ended_first`. A job canceled with no failure
+  is something in the job signalling the runner. Find it by tracing signals, not by bisecting tests.

@@ -475,3 +475,16 @@ the instrument constant across arms" from `91a3581`. Their commit messages are t
   because Claude Code updating itself in place is the same error in production. The five spawn
   sites (agent, model list, task, trigger, delivery route, resource server) share one helper. After
   the fix, 20 runs of `offload-agent`'s tests at 16 threads had no failures.
+
+- **`kill -15 -N` cancelled every CI run.** Once the `ETXTBSY` fix was in, PR #2's `cargo test
+  --workspace` job still ended "The operation was canceled" partway through `offload-node`'s tests.
+  No test had failed and nobody had pressed cancel. A throwaway draft PR ran the tests under a
+  root `bpftrace` watching `sys_enter_execve` for `kill` and `signal:signal_generate` for signals
+  to `Runner.Worker` and `Runner.Listener`. It printed
+  `EXEC kill from thread [supervisor::tes] … argv: kill -15 -13747`, then
+  `SIGNAL 15 to Runner.Listener pid=1871, sent by kill pid=13766`. A supervisor test was cancelling its fake agent,
+  and `signal_group` had shelled out to `kill -<signal> -<pid>`. On Ubuntu's procps-ng `kill`,
+  that SIGTERM did not reach the child's group; it reached the runner's listener, which cancelled the job.
+  util-linux's `kill` on the development laptop parses it as a group, so no local run ever showed
+  it. Both man pages document `kill -s SIGNAL -- -PGID`. The fix builds exactly that, and a second
+  test checks that a group leader and its child both stop.

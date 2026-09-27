@@ -376,13 +376,29 @@ fn signal_group(pid: u32, signal: i32) {
     // SAFETY-adjacent note: `unsafe` is forbidden workspace-wide, so this shells out to
     // `kill` rather than calling libc. Slower, but this runs once per cancellation and
     // keeps the crate free of unsafe code.
-    let target = format!("-{pid}");
     let _ = std::process::Command::new("kill")
-        .arg(format!("-{signal}"))
-        .arg(&target)
+        .args(kill_args(pid, signal))
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .status();
+}
+
+/// `kill`'s arguments for signalling process group `pid`: `-s <signal> -- -<pid>`.
+///
+/// The `--` is the fix, not a style choice. This was `kill -<signal> -<pid>`, which util-linux's
+/// `kill` (Fedora) reads as a group; procps-ng's (Ubuntu) did not. On a GitHub runner,
+/// `kill -15 -13747`, a test stopping its fake agent's group, delivered SIGTERM to the runner's
+/// own `Runner.Listener`, and every CI run was canceled mid-test (session ninety-four, caught by a
+/// root bpftrace probe on `execve` and `signal_generate`). Both implementations document
+/// `-s SIGNAL -- -PGID`: after `--`, a negative number can only be a process group.
+#[cfg(unix)]
+fn kill_args(pid: u32, signal: i32) -> [String; 4] {
+    [
+        "-s".to_string(),
+        signal.to_string(),
+        "--".to_string(),
+        format!("-{pid}"),
+    ]
 }
 
 /// A program the kernel will not execute because something has it open for writing
@@ -1231,5 +1247,46 @@ mod tests {
             .expect("waited for the writer, then read the list");
         release.join().expect("release");
         assert_eq!(models.len(), 1);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_process_group_is_signalled_with_the_options_ended_first() {
+        // `kill -15 -13747` reached a GitHub runner's own listener: procps-ng's `kill` does not
+        // read a negative number after a signal option as a process group. `--` makes it one.
+        assert_eq!(kill_args(13747, 15), ["-s", "15", "--", "-13747"]);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_process_group_is_stopped_by_its_signal() {
+        // And it still works: a group leader and a child in its group both go.
+        use std::os::unix::process::CommandExt;
+        let mut child = std::process::Command::new("sh")
+            .args(["-c", "sleep 30 & wait"])
+            .process_group(0)
+            .spawn()
+            .expect("spawn");
+        let group = child.id();
+        std::thread::sleep(std::time::Duration::from_millis(200));
+        terminate_process_group(group);
+        let started = std::time::Instant::now();
+        loop {
+            if child.try_wait().expect("try_wait").is_some() {
+                break;
+            }
+            assert!(
+                started.elapsed() < std::time::Duration::from_secs(5),
+                "the group was not stopped"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        let still_there = std::process::Command::new("kill")
+            .args(["-s", "0", "--", &format!("-{group}")])
+            .stderr(Stdio::null())
+            .status()
+            .expect("kill -0")
+            .success();
+        assert!(!still_there, "a member of the group outlived the signal");
     }
 }
