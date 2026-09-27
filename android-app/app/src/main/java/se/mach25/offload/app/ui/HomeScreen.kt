@@ -73,6 +73,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -245,6 +246,44 @@ fun HomeScreen(daemon: Daemon?, waiting: Int, onQuestions: () -> Unit, modifier:
         }
     }
 }
+
+/**
+ * The Markdown an agent answers in, as far as a phone screen needs: `**bold**`, `` `code` ``,
+ * `#` headings and `-`/`*` bullets. Anything else is shown as written. The answer card showed
+ * the asterisks themselves (session ninety-four), which is most of what an agent's answer looks
+ * like; a full Markdown renderer is a dependency this app does not need for that.
+ */
+private fun markdown(text: String): androidx.compose.ui.text.AnnotatedString =
+    androidx.compose.ui.text.buildAnnotatedString {
+        val bold = androidx.compose.ui.text.SpanStyle(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+        val code = androidx.compose.ui.text.SpanStyle(fontFamily = FontFamily.Monospace)
+        text.lines().forEachIndexed { index, raw ->
+            if (index > 0) append("\n")
+            val heading = Regex("^#{1,6}\\s+").find(raw)
+            var line = raw
+            if (heading != null) line = raw.substring(heading.range.last + 1)
+            Regex("^(\\s*)[-*]\\s+").find(line)?.let { m -> line = m.groupValues[1] + "• " + line.substring(m.range.last + 1) }
+            val start = length
+            // `**bold**` and `` `code` ``, left to right, unmatched markers left as they are.
+            var i = 0
+            while (i < line.length) {
+                when {
+                    line.startsWith("**", i) && line.indexOf("**", i + 2) > i + 2 -> {
+                        val end = line.indexOf("**", i + 2)
+                        withStyle(bold) { append(line.substring(i + 2, end)) }
+                        i = end + 2
+                    }
+                    line[i] == '`' && line.indexOf('`', i + 1) > i + 1 -> {
+                        val end = line.indexOf('`', i + 1)
+                        withStyle(code) { append(line.substring(i + 1, end)) }
+                        i = end + 1
+                    }
+                    else -> { append(line[i]); i++ }
+                }
+            }
+            if (heading != null) addStyle(bold, start, length)
+        }
+    }
 
 /** Swipe a finished run either way to put it away. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -846,7 +885,7 @@ private fun RunDetail(daemon: Daemon?, run: RunRow, onEdit: (RunRow) -> Unit = {
                 Column(Modifier.padding(14.dp).verticalScroll(rememberScrollState())) {
                     Text("Answer", style = MaterialTheme.typography.labelLarge, color = Brand.Cyan)
                     Spacer(Modifier.size(4.dp))
-                    SelectionContainer { Text(it, style = MaterialTheme.typography.bodyMedium) }
+                    SelectionContainer { Text(markdown(it), style = MaterialTheme.typography.bodyMedium) }
                 }
             }
         }
