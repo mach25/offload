@@ -1,0 +1,26 @@
+[package]
+name = "offload-power"
+description = "Keeps the machine from idle sleep while a node may take work (ADR-0077)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+# No dependencies: on macOS it links Apple's IOKit and CoreFoundation, which every Mac has.
+
+# The workspace's lints, with one exception: `unsafe_code` is `deny` here rather than `forbid`,
+# because asking macOS not to sleep is a C call and a C call cannot be written without it. It is
+# allowed in `src/macos.rs` alone, each call with a SAFETY note, and a test in this crate fails if it
+# appears anywhere else. Kept in a crate of its own so that `offload-node` and every other crate keep
+# `forbid` (the owner's choice, session ninety-two). Everything else matches the workspace table and
+# must stay in step.
+[lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+
+[lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+cast_possible_truncation = "warn"

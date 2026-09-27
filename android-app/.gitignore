@@ -1,0 +1,8 @@
+.gradle/
+build/
+local.properties
+# Built by scripts/build-android-product.sh from this repository's crates; never commit them.
+app/src/main/jniLibs/
+app/src/generated/
+.idea/
+*.iml

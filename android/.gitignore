@@ -1,0 +1,7 @@
+.gradle/
+build/
+local.properties
+# The daemon is built by scripts/build-android-app.sh from this repository's crates; never commit it.
+app/src/main/jniLibs/
+.idea/
+*.iml

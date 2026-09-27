@@ -1,0 +1,12 @@
+# 1.97 rather than the 1.82 this started on: much of the ecosystem now ships edition2024,
+# and holding the toolchain back meant pinning a growing list of transitive dependencies
+# (clap, uuid, getrandom, hashbrown) to pre-2024 versions. Chasing those pins costs more
+# than it buys, and each one silently freezes a dependency at an unpatched version.
+#
+# `stable` rather than an exact version is a known compromise: a fleet that builds on
+# heterogeneous machines would rather pin, and this should become an exact channel once
+# the build environment can install one. `rust-version` in Cargo.toml (1.85) is the real
+# floor and is enforced at build time.
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]

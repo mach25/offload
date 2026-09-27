@@ -1,0 +1,36 @@
+[package]
+name = "offload-core"
+description = "Pure domain model for Offload: identities, capabilities, constraints, run state machine."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+# Deliberately dependency-light: no tokio, no I/O, no clock access. See docs/adr/0001.
+# ed25519 and argon2 are the exceptions and stay inside that rule: signing, verifying and
+# key derivation are pure functions, entropy is supplied by the caller, and expiry is checked
+# against an injected `now`. Owning the formats here is what keeps sign and verify byte-
+# identical, and what makes the fleet key derivation one definition rather than two (ADR-0012).
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+ed25519-dalek = { workspace = true }
+# P-256 is a third exception, for the same reason: verifying an approval signed in secure
+# hardware is a pure function of the key, the bytes and the signature (ADR-0069 §4).
+p256 = { workspace = true }
+argon2 = { workspace = true }
+zeroize = { workspace = true }
+hex = { workspace = true }
+# A fast, non-secret digest, for the one thing here that needs one: fingerprinting an agent
+# account so two nodes can tell they share a rate limit. Deliberately not argon2 — the input is
+# high-entropy, and the probe recomputes this on every re-probe tick.
+blake3 = "1"
+
+[dev-dependencies]
+serde_json = { workspace = true }
+# Tests sign with a software P-256 key to stand in for the hardware one.
+p256 = { workspace = true, features = ["ecdsa", "std", "arithmetic"] }
+proptest = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,22 @@
+[package]
+name = "offload-store"
+description = "Durable node state: SQLite registry, event log, and a content-addressed blob store."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+offload-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+blake3 = "1"
+rusqlite = { version = "0.37", features = ["bundled"] }
+
+[dev-dependencies]
+proptest = { workspace = true }
+
+[lints]
+workspace = true

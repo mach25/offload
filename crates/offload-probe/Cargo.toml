@@ -1,0 +1,17 @@
+[package]
+name = "offload-probe"
+description = "Detects what this device is and has, producing offload-core Capabilities."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+offload-core = { workspace = true }
+sysinfo = { workspace = true }
+# One field out of the agent's own settings file (`oauthAccount.accountUuid`), which is what
+# makes two nodes on one account agree that they share a rate limit.
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

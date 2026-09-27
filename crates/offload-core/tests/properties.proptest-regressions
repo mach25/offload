@@ -1,0 +1,10 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 5781eed8427fd398629ac74a4b2f1a55bd0c2f6085043d10ff289fdc764057a9 # shrinks to clauses = [All([All([HasAgent(ClaudeCode)])]), Not(Always)], cores = 0, mem = 0, mains = false
+cc f9eeb36b03039a87dc22a90bde4cd74e295f0bcb4ffb437311dc33b8cfadf9df # shrinks to acts = [Assign(3), Checkpointed(3, Current)], pinned = true
+cc 434bb5d3df704e172eca786fa51c466206f4f01c41b1846fc8d88379cd990436 # shrinks to holder = 2, relay = 1, epoch = 1
+cc 2ca7a2408a0769a0cd016884b44a2100d5f313a2d573cb0dac2ad4ec5260ecff # shrinks to program = "sh", (prefix, suffix) = ("/bin/", ""), quoted = true

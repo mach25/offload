@@ -1,0 +1,27 @@
+[package]
+name = "offload-cluster"
+description = "Membership, failure detection and gossip: who is out there, and who has gone quiet."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+offload-core = { workspace = true }
+offload-proto = { path = "../offload-proto" }
+offload-transport = { path = "../offload-transport" }
+async-trait = { workspace = true }
+blake3 = "1"
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio = { version = "1", features = ["rt", "sync", "time", "macros"] }
+tracing = { workspace = true }
+
+[dev-dependencies]
+blake3 = "1"
+ed25519-dalek = { workspace = true }
+proptest = { workspace = true }
+tokio = { version = "1", features = ["full"] }
+
+[lints]
+workspace = true

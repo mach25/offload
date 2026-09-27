@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Offload mark as a notification icon: Android draws these as a single-colour silhouette, so
+     this is the mark from assets/app-icon.svg in white, with no gradient and no background. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+    <group
+        android:translateX="-4"
+        android:translateY="0">
+        <path
+            android:pathData="M88,31A39,39 0,1 0,88 97"
+            android:strokeWidth="13"
+            android:strokeColor="#FFFFFFFF"
+            android:fillColor="#00000000" />
+        <path
+            android:pathData="M83,24h14v14h-14z"
+            android:fillColor="#FFFFFFFF" />
+        <path
+            android:pathData="M83,90h14v14h-14z"
+            android:fillColor="#FFFFFFFF" />
+        <path
+            android:pathData="M53,58h29v-10l22,16 -22,16v-10H53z"
+            android:fillColor="#FFFFFFFF" />
+    </group>
+</vector>

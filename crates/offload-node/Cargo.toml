@@ -1,0 +1,49 @@
+[package]
+name = "offload-node"
+description = "The `offloadd` daemon: hosts agent runs on this device."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "offloadd"
+path = "src/main.rs"
+
+[lib]
+name = "offload_node"
+path = "src/lib.rs"
+
+[dependencies]
+offload-power = { path = "../offload-power" }
+offload-core = { workspace = true }
+ed25519-dalek = { workspace = true }
+rand = { workspace = true }
+hex = { workspace = true }
+base64 = { workspace = true }
+offload-agent = { path = "../offload-agent" }
+offload-cluster = { path = "../offload-cluster" }
+offload-proto = { path = "../offload-proto" }
+offload-transport = { path = "../offload-transport" }
+offload-workspace = { path = "../offload-workspace" }
+offload-probe = { path = "../offload-probe" }
+offload-store = { path = "../offload-store" }
+rusqlite = { version = "0.37", features = ["bundled"] }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+toml = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+uuid = { version = "1", features = ["v4", "v7", "serde"] }
+tokio = { version = "1", features = ["full"] }
+
+[dev-dependencies]
+# A software P-256 key plays the host's hardware key in the approval-key tests (ADR-0069 §4).
+p256 = { workspace = true, features = ["ecdsa", "std", "arithmetic"] }
+
+[lints]
+workspace = true

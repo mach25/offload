@@ -1,0 +1,33 @@
+[package]
+name = "offload-agent"
+description = "Agent adapters: spawn a coding agent, stream its events, checkpoint and resume it."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+offload-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+uuid = { version = "1", features = ["v4", "serde"] }
+tokio = { version = "1", features = [
+    "process",
+    "io-util",
+    "rt",
+    "sync",
+    "macros",
+    "time",
+] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tracing-subscriber = { workspace = true }
+# For `build_argv`, which is a pure function of the request and has one unit test per flag —
+# the question a property answers is whether some *combination* loses one.
+proptest = { workspace = true }
+
+[lints]
+workspace = true
