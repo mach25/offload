@@ -57,12 +57,12 @@ Two binaries:
    would otherwise break, an ADR for a decision, a paragraph at the top of `docs/sessions.md`, and
    a replaced — not appended — pick-up list in `docs/HANDOFF.md`. `CONTRIBUTING.md` has the full
    table and the commit-message conventions.
-7. **Commit onto `main`, which stays local.** No session branches. `origin` (github.com/mach25/offload,
-   public) is published from a separate branch, `public`, one squashed commit per publish, so the
-   private history never leaves this machine. **Never push `main`.** To publish: scrub first (no
-   real addresses, paths, serials, ids or device models; see `CONTRIBUTING.md`), then
-   `git commit-tree main^{tree} -p public -m …`, move `public` to it, and `git push origin
-   public:main` only when the owner asks.
+7. **Work on a branch and open a pull request.** Never commit to `main` or push it: `main` is
+   the public history (github.com/mach25/offload), and it changes only by a merged PR. This holds
+   for every session, the owner's included. One branch per topic, named for it
+   (`fix/stale-copy-reopens-a-run`, `docs/android-guide`); push it and open the PR with
+   `gh pr create` once the four commands pass. The PR description is agreement 5's status, plus
+   anything the reviewer must check by hand. The owner reviews and merges.
 8. **The owner's setup is local, never committed.** Their devices, addresses, serials, account and
    fleet ids, device models and client project names live in `local/` (gitignored):
    `local/SETUP.md` for the fleet as it stands and how to reach each device, `local/forbidden.txt`

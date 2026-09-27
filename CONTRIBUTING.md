@@ -12,6 +12,29 @@ thing from this file, take that.
 
 ---
 
+## How to contribute
+
+Most changes here are written by an AI agent with a person directing it, and yours probably will
+be too. That is welcome; the rules below are written so an agent can follow them.
+
+1. **Branch from `main`**, one topic per branch. Fork the repository if you cannot push to it.
+2. **Point your agent at `CLAUDE.md` first.** It is the orientation document, and it is written
+   for whoever is doing the work.
+3. **Read before you touch**: `docs/HANDOFF.md`, the phase in `docs/ROADMAP.md`, the ADRs for
+   what you are changing, and the pitfall file for it (`CLAUDE.md` has the table).
+4. **Before you push**, run the four commands in `CLAUDE.md` (build, test, clippy with
+   `-D warnings`, fmt). A PR that fails them is not ready for review.
+5. **Open a pull request.** Say what changed and why, the phase and ADR it touches or `none`, the
+   test and clippy state, and what a reviewer should check by hand. If you walked it on real
+   machines, say what you ran and what it printed. `main` changes only by a merged PR.
+6. **Write down what went wrong**, not only the fix: a pitfall entry, an ADR for a decision, a
+   paragraph in `docs/sessions.md`. The table under *Where to write things down* says which.
+7. **Keep your own setup out of it.** No real addresses, home paths, serials, account or fleet
+   ids, device models or client names in tracked files; *Publishing* below says what to write.
+
+Some items in `docs/HANDOFF.md` name the owner's own devices ("check the Mac overnight"). Those
+are theirs to walk; leave them unless the owner asks.
+
 ## Before you write code
 
 **Read `docs/HANDOFF.md`.** It is the live head: what is true now, and what to pick up. It is
@@ -168,12 +191,11 @@ cold. Highlights:
 
 ## Publishing
 
-`main` is local and keeps the full history. The public repository gets one squashed commit per
-publish from the `public` branch, so nothing about the owner's setup that history holds is ever
-pushed. Tracked files must not carry it either: no real network addresses, home paths or
-usernames, device serials, account fingerprints, fleet or node ids, device models, or client
-project names. The owner's real values, and the grep that checks for them, are kept outside the
-repository; run it before every publish.
+`main` is the public history; it changes only by a merged pull request. Tracked files must not
+carry a device owner's own setup: no real network addresses, home paths or usernames, device
+serials, account fingerprints, fleet or node ids, device models, or client project names. Keep
+those in a gitignored `local/` directory. A maintainer's local hooks check every commit and every
+push against that directory's list of real values.
 
 Write documentation ranges (`192.0.2.x`, `2001:db8::`), `/home/owner`, `phone-app`, `tablet`,
 `PHONESERIAL`, "the phone", "a Samsung phone". Test fixtures use `example.com` and obviously fake
@@ -186,8 +208,8 @@ hostname, and that name is on every screen that lists devices.
 
 ## Commits
 
-Work goes **straight onto `main`**. There is no remote and nothing is pushed; a branch buys none
-of what branching is for and adds a merge step.
+Work goes on **a branch, merged by pull request** (*How to contribute*, above). Nobody commits to
+`main` directly, the owner included.
 
 **One commit per fact.** If a commit does two things, split the working tree rather than write a
 message with "and" in it. Sessions here routinely produce five or six commits that share nothing
@@ -204,10 +226,11 @@ not a category (`fix: notifications`). The body should answer:
 End the message with:
 
 ```
-Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+Co-Authored-By: <the agent and model> <its address>
 ```
 
-…if an agent wrote it, which is the honest description for most of this repository.
+…if an agent wrote it, which is the honest description for most of this repository. Claude Code
+writes `Co-Authored-By: Claude … <noreply@anthropic.com>`.
 
 **A schema or wire change says so loudly.** A wire bump means every node upgrades. A change to any
 signed message means **every device re-joins**, and there is no migration for a signature.
