@@ -58,12 +58,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -134,6 +136,13 @@ fun HomeScreen(daemon: Daemon?, waiting: Int, onQuestions: () -> Unit, modifier:
     var undo by remember { mutableStateOf<RunRow?>(null) }
     // A pending run taken back to be edited: its prompt and repository, for the composer.
     var prefill by remember { mutableStateOf<Pair<String, String>?>(null) }
+    // Pulled down: read the runs now, and have the composer read the fleet now. The composer reads
+    // every 15 s, and its first read, made as opening the app starts the node, can come before the
+    // node has met anyone. A pull re-reads this device's node; it cannot make the node hear from
+    // the fleet any sooner.
+    var pulls by remember { mutableIntStateOf(0) }
+    var refreshing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -167,8 +176,22 @@ fun HomeScreen(daemon: Daemon?, waiting: Int, onQuestions: () -> Unit, modifier:
             run.id in archived || now - run.startedAtUnix.toLong() > Archive.AFTER_SECONDS
         val earlier = finished.filterNot(::away).take(EARLIER)
         val putAway = finished.filter(::away)
+        PullToRefreshBox(
+            isRefreshing = refreshing,
+            onRefresh = {
+                refreshing = true
+                scope.launch {
+                    ask { daemon!!.runs() }
+                        .onSuccess { view = it; failure = null }
+                        .onFailure { failure = it.message }
+                    // The composer's next read of the fleet ends the pull.
+                    pulls++
+                }
+            },
+            modifier = Modifier.weight(1f).fillMaxWidth(),
+        ) {
         LazyColumn(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             reverseLayout = false,
         ) {
@@ -222,7 +245,10 @@ fun HomeScreen(daemon: Daemon?, waiting: Int, onQuestions: () -> Unit, modifier:
             // ninety-four). A run's way forward in the app is Continue.
             item { Spacer(Modifier.size(8.dp)) }
         }
-        Composer(daemon, prefill, onPrefilled = { prefill = null }) { said -> message = said }
+        }
+        Composer(daemon, prefill, pulls, onRead = { refreshing = false }, onPrefilled = { prefill = null }) { said ->
+            message = said
+        }
     }
 
     open?.let { opened ->
@@ -428,6 +454,8 @@ private fun StateChip(state: String) {
 private fun Composer(
     daemon: Daemon?,
     prefill: Pair<String, String>?,
+    pulls: Int,
+    onRead: () -> Unit,
     onPrefilled: () -> Unit,
     done: (String) -> Unit,
 ) {
@@ -460,13 +488,15 @@ private fun Composer(
     }
     // What the fleet's devices have, from the nodes this one can see now.
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(daemon, lifecycle) {
+    // A pull on the runs list (`pulls`) starts the loop again, so it reads now.
+    LaunchedEffect(daemon, lifecycle, pulls) {
         // Only while the app is on screen: cancelled in the background, started again on return.
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
                 ask { daemon!!.nodes() }.onSuccess { view ->
                     nodes = view.nodes.filter { it.status != se.mach25.offload.client.PeerStatus.DEAD }
                 }
+                onRead()
                 delay(15_000)
             }
         }
