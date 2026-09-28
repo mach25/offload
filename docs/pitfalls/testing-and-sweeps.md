@@ -286,3 +286,4 @@ Working rules. Full entries — mechanism, measurement, how each was found — i
   `-c user.name=… -c user.email=…`. To reproduce CI's git locally, run the suite under
   `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1`, with `--no-fail-fast` so one failing crate
   does not hide the next.
+- **In `pmset -g log`, only `Entering Sleep state` is sleep**; `Entering DarkWake … 'Idle Sleep'` with the assertion held is the Mac awake with its display off.
