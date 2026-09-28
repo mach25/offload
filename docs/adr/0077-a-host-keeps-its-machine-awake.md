@@ -56,7 +56,7 @@ says.
 The daemon now holds **`PreventSystemSleep`** (`caffeinate -s`), which holds through a dark wake.
 Walked on the same Mac, untouched for five minutes: one return to dark wake at 12:23:12 and no
 sleep entry after it, where each dark wake had ended in sleep within about 45 s before. The laptop
-saw it `alive` throughout. Five minutes, not a night: the overnight check is on the pick-up list.
+saw it `alive` throughout. It then held for a night (2026-09-27/28): eleven hours, no sleep, never marked dead.
 
 §2 still holds: a lid, the Sleep menu and a low battery still sleep the machine.
 
