@@ -91,12 +91,7 @@ phone**, and a stopped phone hears its news when it is opened. `docs/sessions.md
    `AdbMulticastLock` whenever it is on (ADR-0078's correction). The owner was told to turn wireless
    debugging off between walks. Ask them to turn it on before using the phone over adb.
 
-2. **The Mac overnight, awake or not.** ADR-0077 now holds `PreventSystemSleep`, walked for five
-   untouched minutes only. In the morning, and *before* any ssh (an ssh wakes it), check the laptop's
-   `offload nodes` for `macmini`. Then run `pmset -g log | grep -E ' (Sleep|DarkWake|Wake) '` on the
-   Mac and look for any `Entering Sleep` after 12:23 on 2026-09-27.
-
-3. **ADR-0080 is walked on two hosts**: the Mac (macOS 27.0, after the owner allowed `offloadd` in
+2. **ADR-0080 is walked on two hosts**: the Mac (macOS 27.0, after the owner allowed `offloadd` in
    Local Network and rebooted) and the laptop each read 11 models at startup, `offload models` lists
    every model as offered by both, and one `offload models --refresh` on the laptop at 14:34:22Z was
    read on both within a second ("asked on this node", "asked by the fleet"). The reboot also proved
@@ -104,20 +99,20 @@ phone**, and a stopped phone hears its news when it is opened. `docs/sessions.md
    `PreventSystemSleep`, and logged no sleep. **Not yet walked:** the read after a Claude Code update
    (the version trigger). The next `claude` update on either host is the walk: its log should show
    `reason="the agent changed"`.
-4. **A rebuild of the Mac's `offloadd` may need the Local Network click again.** It did after the
+3. **A rebuild of the Mac's `offloadd` may need the Local Network click again.** It did after the
    first ADR-0080 build (macOS 26.6.2). After the owner allowed it, updated to macOS 27.0 and
    rebooted, the next rebuild (`85fe9b1`) was *not* blocked: one refused send at startup, then
    meshed. One observation, not a rule: warn the owner before a rebuild, and run the `python3`
    control (`docs/DEMO.md`) if sends are refused for more than a minute.
 
-5. **The app's run rows and details (session ninety-four):** rows say who ran it and the model
+4. **The app's run rows and details (session ninety-four):** rows say who ran it and the model
    asked for (`RunSummary::host`, `::model`), and the detail sheet lists ran on, model used (from
    the log's `agent … , model …` line) against the model asked, agent, start, workspace, turns,
    tokens, cost and id. Walked on the tablet with the owner's email runs (laptop, haiku).
-6. **Fixed in session ninety-four: a finished run was never told if its decider was alone, and a
+5. **Fixed in session ninety-four: a finished run was never told if its decider was alone, and a
    stale copy could reopen it.** See `gossip-and-merge`. Walked on the typo run: every node agrees
    it is cancelled now. On every node, the Mac included (`4932bbd`).
-7. **The owner's email runs could not read mail**: Offload starts Claude Code with
+6. **The owner's email runs could not read mail**: Offload starts Claude Code with
    `--strict-mcp-config`, so the account's own Gmail and Microsoft 365 connectors are not handed to
    runs. Deliberate (the MCP rule in `agent-adapter`). Granting mail is ADR-0011's resources: a
    nominated MCP server granted per run with `--use`. Offer that to the owner rather than loosening
