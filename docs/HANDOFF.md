@@ -118,6 +118,10 @@ phone**, and a stopped phone hears its news when it is opened. `docs/sessions.md
    nominated MCP server granted per run with `--use`. Offer that to the owner rather than loosening
    the rule.
 
+7. **Pull to refresh on the Runs tab.** The composer's fleet read is every 15 s, and the first one,
+   made as opening the app starts the node, can come before the node has met anyone. A pull
+   re-reads the runs and the fleet. Not done: reading faster until the node has met the fleet.
+
 **Decided, do not re-ask:** a stopped phone does not host, not even on charge (the owner, session
 ninety-four; ADR-0079's residual has the Android constraint if it is ever re-opened).
 

@@ -98,6 +98,9 @@ routable address, such as IPv6 at home, but there is no relay yet for two device
   and, if you like, a model, then send. The line above the box says which devices can take it.
 - **Run a program**: pick one of the programs your devices offer. Programs are set up by each
   device's owner in its `node.toml` (`[[tasks]]`), not in the app.
+- **Pull the runs list down** to look again now. Just after the app opens, its node may not have
+  heard from the rest of the fleet yet, so the devices and programs it lists can be missing. The
+  app looks again every 15 seconds anyway.
 - **Tap a run** for its details: which device ran it, the model it used, what it cost, and its
   answer, with *Files* to browse what it wrote and a box to continue from it.
 - **Questions**: when you ask for *Ask me first*, an agent that wants permission for something
